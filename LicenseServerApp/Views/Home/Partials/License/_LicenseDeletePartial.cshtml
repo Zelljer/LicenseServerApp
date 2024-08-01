@@ -1,0 +1,33 @@
+﻿@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        function deleteLicense() {
+            $.ajax({
+                url: '@Url.Action("DeleteLicense", "Home")',
+                type: 'DELETE',
+                data: { licenseId: $("#idInput").val() },
+                success: function (data) { 
+                    Swal.fire({
+                        title: 'Данные удалены',
+                        text: "Данные были успешно удалены!",
+                        icon: 'success',
+                        showConfirmButton: true
+                    });
+                },
+                error: function () {
+                    alert('Ошибка при выполнении действия');
+                }
+            });
+        }
+    </script>
+}
+
+<div class="row">
+	<div class="col">
+        <label>Id лицензии для удаления: </label>
+        <input id="idInput"/>
+        <button style="width:125px" class="btn btn-success" onclick="deleteLicense()">Удалить</button>
+	</div>
+</div>

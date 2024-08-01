@@ -1,0 +1,28 @@
+﻿@model IEnumerable<OrganizationAPI.OrganizationResponse>
+<div>
+    <div>
+        <table class="table table-stroiped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ИНН</th>
+                    <th>КПП</th>
+                    <th>Ел. почта</th>
+                    <th>Телефон</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th>@Html.DisplayFor(modelItem => item.Id)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Inn)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Kpp)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Email)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Phone)</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

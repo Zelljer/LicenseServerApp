@@ -1,0 +1,77 @@
+﻿@model UserAPI.UserRegistrationRequest;
+
+<div class="row">
+	<div class="col">
+		@using (Html.BeginForm("UserRegistration", "Home", FormMethod.Post))
+		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Логин</label>
+						@Html.TextBoxFor(x => x.Login, "", new { @class = "form-control", @placeholder = "", @id = "Login" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Пароль</label>
+						@Html.TextBoxFor(x => x.Password, "", new { @class = "form-control", @placeholder = "", @id = "Password" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Имя</label>
+						@Html.TextBoxFor(x => x.Name, "", new { @class = "form-control", @placeholder = "", @id = "Name" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Фамилия</label>
+						@Html.TextBoxFor(x => x.Surname, "", new { @class = "form-control", @placeholder = "", @id = "Surname" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Отчество</label>
+						@Html.TextBoxFor(x => x.Patronymic, "", new { @class = "form-control", @placeholder = "", @id = "Patronymic" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Роль</label>
+						<select asp-for="Role" class="form-control" id="Role">
+						@foreach (var item in Enum.GetValues(typeof(RoleType)))
+						{
+							<option value=@item>@item.ToString()</option>
+						}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<button style="width:125px" class="btn btn-success" type="submit">Зарегистрировать</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

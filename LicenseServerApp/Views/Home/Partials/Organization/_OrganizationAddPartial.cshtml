@@ -1,0 +1,54 @@
+﻿@model OrganizationAPI.OrganizationRequest;
+
+<div class="row">
+	<div class="col">
+		@using (Html.BeginForm("CreateOrganization", "Home", FormMethod.Post))
+		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>ИНН</label>
+						@Html.TextBoxFor(x => x.Inn, "", new { @class = "form-control", @placeholder = "", @id = "Inn" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>КПП</label>
+						@Html.TextBoxFor(x => x.Kpp, "", new { @class = "form-control", @placeholder = "", @id = "Kpp" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Адрес эл. почты</label>
+						@Html.TextBoxFor(x => x.Email, "", new { @class = "form-control", @placeholder = "", @id = "Email" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Номер телефона</label>
+						@Html.TextBoxFor(x => x.Phone, "", new { @class = "form-control", @placeholder = "", @id = "Phone" })
+					</div>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<button style="width:125px" class="btn btn-success" type="submit">Сохранить</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

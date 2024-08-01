@@ -1,0 +1,28 @@
+﻿@model IEnumerable<TarifAPI.TarifResponse>
+<div>
+    <div>
+        <table class="table table-stroiped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Название</th>
+                    <th>Программа</th>
+                    <th>Цена</th>
+                    <th>Кол-во дней действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th>@Html.DisplayFor(modelItem => item.Id)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Name)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Program)</th>
+                        <th>@Html.DisplayFor(modelItem => item.Price)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DaysCount)</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

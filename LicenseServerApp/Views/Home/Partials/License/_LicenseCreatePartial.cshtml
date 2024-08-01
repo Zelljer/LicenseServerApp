@@ -1,0 +1,45 @@
+﻿@model LicenseAPI.LicenseRequest;
+
+<div class="row">
+	<div class="col">
+		@using (Html.BeginForm("CreateLicense", "Home", FormMethod.Post))
+		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Организация</label>
+						@Html.TextBoxFor(x => x.OrganizationId, "", new { @class = "form-control", @placeholder = "", @id = "OrganizationId" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Тариф</label>
+						@Html.TextBoxFor(x => x.TarifId, "", new { @class = "form-control", @placeholder = "", @id = "TarifId" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Дата начала действия</label>
+						@Html.TextBoxFor(x => x.DateStart, "", new { @class = "form-control", @placeholder = "", @id = "DateStart" })
+					</div>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<button style="width:125px" class="btn btn-success" type="submit">Сохранить</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

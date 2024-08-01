@@ -1,0 +1,59 @@
+﻿@model TarifAPI.TarifRequest;
+
+<div class="row">
+	<div class="col">
+		@using (Html.BeginForm("CreateTarif", "Home", FormMethod.Post))
+		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Название</label>
+						@Html.TextBoxFor(x => x.Name, "", new { @class = "form-control", @placeholder = "", @id = "Name" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Программа</label>
+						<select asp-for="Program" class="form-control" id="Program">
+							@foreach (var item in Enum.GetValues(typeof(ProgramType)))
+							{
+								<option value=@item>@item.ToString()</option>
+							}
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Цена</label>
+						@Html.TextBoxFor(x => x.Price, "", new { @class = "form-control", @placeholder = "", @id = "Price" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Кол-во дней</label>
+						@Html.TextBoxFor(x => x.DaysCount, "", new { @class = "form-control", @placeholder = "", @id = "DaysCount" })
+					</div>
+				</div>
+			</div>
+
+			<br />
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<button style="width:125px" class="btn btn-success" type="submit">Сохранить</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

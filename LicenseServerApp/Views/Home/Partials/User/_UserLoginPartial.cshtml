@@ -1,0 +1,36 @@
+﻿@model UserAPI.UserAuthentificationRequest;
+
+<div class="row">
+	<div class="col">
+		@using (Html.BeginForm("UserAuthentification", "Home", FormMethod.Post))
+		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Логин</label>
+						@Html.TextBoxFor(x => x.Login, "", new { @class = "form-control", @placeholder = "", @id = "Login" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Пароль</label>
+						@Html.TextBoxFor(x => x.Password, "", new { @class = "form-control", @placeholder = "", @id = "Password" })
+					</div>
+				</div>
+			</div>
+
+			<br/>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<button style="width:125px" class="btn btn-success" type="submit">Войти</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

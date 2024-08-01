@@ -1,0 +1,31 @@
+﻿@model IEnumerable<LicenseAPI.LicenseResponse>
+<div>
+    <div>
+        <table class="table table-stroiped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Id организации</th>
+                    <th>Id тарифа</th>
+                    <th>Дата создания</th>
+                    <th>Дата начала действия</th>
+                    <th>Дата истеченя срока</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th>@Html.DisplayFor(modelItem => item.Id)</th>
+                        <th>@Html.DisplayFor(modelItem => item.OrganizationId)</th>
+                        <th>@Html.DisplayFor(modelItem => item.TarifId)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateCreated)</th>
+                        <th>@Html.DisplayFor(modelItem => item.StartDate)</th>
+                        <th>@Html.DisplayFor(modelItem => item.EndDate)</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
