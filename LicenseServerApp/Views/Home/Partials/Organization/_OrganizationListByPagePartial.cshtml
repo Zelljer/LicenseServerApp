@@ -1,4 +1,33 @@
-﻿@model IEnumerable<OrganizationAPI.OrganizationResponse>
+﻿@model PagedResult<OrganizationsLiceses>
+
+<script type="text/javascript">
+    function updatePartial() {
+        $.ajax({
+            url: '@Url.Action("GetOrganizationsByPages", "Home")',
+            type: 'GET',
+            data: { page: $("#currenrPage").val(), pageSize: $("#pageSize").val() },
+            success: function (data) {
+                $('#dataContainer').html(data);
+            },
+            error: function () {
+                alert('Ошибка при выполнении действия');
+            }
+        });
+    }
+</script>
+
+<div class="row">
+    <div class="col">
+        <label>Укажите страницу: </label>
+        <input id="currenrPage" />
+        <label>Укажите размер 1 страницы: </label>
+        <input id="pageSize" />
+        <button style="width:125px" class="btn btn-success" onclick="updatePartial()">Получить</button>
+        <label>Текущая страница: </label>
+        <label>Всего стрвниц: </label>
+    </div>
+</div>
+
 <div>
     <div>
         <table class="table table-stroiped">
@@ -9,19 +38,11 @@
                     <th>КПП</th>
                     <th>Ел. почта</th>
                     <th>Телефон</th>
+                    <th>Лицензии</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <th>@Html.DisplayFor(modelItem => item.Id)</th>
-                        <th>@Html.DisplayFor(modelItem => item.Inn)</th>
-                        <th>@Html.DisplayFor(modelItem => item.Kpp)</th>
-                        <th>@Html.DisplayFor(modelItem => item.Email)</th>
-                        <th>@Html.DisplayFor(modelItem => item.Phone)</th>
-                    </tr>
-                }
+               
             </tbody>
         </table>
     </div>

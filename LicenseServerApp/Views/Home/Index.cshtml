@@ -6,11 +6,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script type="text/javascript">
-
-        $(document).ready(function () {
-            changePartial();
-        });
-
         function changePartial() {
             $.ajax({
                 url: '@Url.Action("SetPartial", "Home")',
@@ -32,18 +27,20 @@
         <div class="row">
             <select name="sort" onchange="changePartial()" id="partialList">
                 <option value="1">Получить лицензии по Id организации</option>
-                <option value="2">Создать лицензию</option>
-                <option value="3">Удалить лицензию</option>
+                <option value="2">Получить лицензии по Id организации по определенной программе</option>
+                <option value="3">Создать лицензию</option>
+                <option value="4">Удалить лицензию</option>
 
-                <option value="4">Получить организации с их лиценизиями (постраничный вывод)</option>
-                <option value="5">Добавить организацию</option>
+                <option value="5">Получить организации с их лиценизиями (постраничный вывод)</option>
+                <option value="6">Добавить организацию</option>
 
-                <option value="6">Получить все тарифы</option>
-                <option value="7">Добавить тариф</option>
+                <option value="7">Получить все тарифы</option>
+                <option value="8">Получить тариф по Id</option>
+                <option value="9">Добавить тариф</option>
 
-                <option value="8" selected="selected">Авторизация</option>
-                <option value="9">Регистрация</option>
-                <option value="10">Получение текущего токена</option>
+                <option value="10" selected="selected">Авторизация</option>
+                <option value="11">Регистрация</option>
+                <option value="12">Получение текущего токена</option>
             </select>
         </div>
     </div>

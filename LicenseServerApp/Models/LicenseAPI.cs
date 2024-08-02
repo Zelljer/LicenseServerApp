@@ -1,4 +1,6 @@
-﻿namespace LicenseServerApp.Models
+﻿using Newtonsoft.Json;
+
+namespace LicenseServerApp.Models
 {
 	public class LicenseAPI
 	{
@@ -14,9 +16,12 @@
 
 		public class LicenseRequest
 		{
-			public int OrganizationId { get; set; }
-			public int TarifId { get; set; }
-			public string DateStart { get; set; }
+            [JsonProperty("organizationId")]
+            public int OrganizationId { get; set; }
+            [JsonProperty("tarifId")]
+            public int TarifId { get; set; }
+            [JsonProperty("dateStart")]
+            public string DateStart { get; set; }
 		}
 	}
 }

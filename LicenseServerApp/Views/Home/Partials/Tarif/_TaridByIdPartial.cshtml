@@ -1,0 +1,49 @@
+﻿@model TarifAPI.TarifResponse
+
+<script type="text/javascript">
+    function updatePartial() {
+        $.ajax({
+            url: '@Url.Action("GetTarifById", "Home")',
+            type: 'GET',
+            data: { tarifid: $("#tarifIdInput").val() },
+            success: function (data) {
+                $('#dataContainer').html(data);
+            },
+            error: function () {
+                alert('Ошибка при выполнении действия');
+            }
+        });
+    }
+</script>
+
+<div>
+    <div>
+        <div class="row">
+            <div class="col">
+                <label>Укажите id тарифа: </label>
+                <input id="tarifIdInput" />
+                <button style="width:125px" class="btn btn-success" onclick="updatePartial()">Получить</button>
+            </div>
+        </div>
+        <table class="table table-stroiped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Название</th>
+                    <th>Программа</th>
+                    <th>Цена</th>
+                    <th>Кол-во дней действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>@Html.DisplayFor(modelItem => Model.Id)</th>
+                    <th>@Html.DisplayFor(modelItem => Model.Name)</th>
+                    <th>@Html.DisplayFor(modelItem => Model.Program)</th>
+                    <th>@Html.DisplayFor(modelItem => Model.Price)</th>
+                    <th>@Html.DisplayFor(modelItem => Model.DaysCount)</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

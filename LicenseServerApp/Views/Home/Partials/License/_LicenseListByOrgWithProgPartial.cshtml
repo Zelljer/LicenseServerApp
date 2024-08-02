@@ -3,9 +3,9 @@
 <script type="text/javascript">
     function updateLicenseList() {
         $.ajax({
-            url: '@Url.Action("GetLicensesByOrg", "Home")',
+            url: '@Url.Action("GetLicensesByOrgWithProg", "Home")',
             type: 'GET',
-            data: { orgId: $("#orgIdInput").val() },
+            data: { orgId: $("#orgInput").val(), program: $("#progSelect").prop('selectedIndex') },
             success: function (data) {
                 $('#dataContainer').html(data);
             },
@@ -21,7 +21,14 @@
         <div class="row">
             <div class="col">
                 <label>Укажите id организации: </label>
-                <input id="orgIdInput" />
+                <input id="orgInput" />
+                <label>Укажите программу: </label>
+                <select class="form-control" id="progSelect" style="width:125px">
+                    @foreach (var item in Enum.GetValues(typeof(ProgramType)))
+                    {
+                        <option>@item.ToString()</option>
+                    }
+                </select>
                 <button style="width:125px" class="btn btn-success" onclick="updateLicenseList()">Получить</button>
             </div>
         </div>

@@ -3,18 +3,18 @@ using Refit;
 
 namespace LicenseServerApp.Utils.Interfaces
 {
-    public interface IApiProxy
+	public interface IApiProxy
 	{
         [Get("/api/Licenses/licensesOrg")]
-		Task<List<LicenseAPI.LicenseResponse>> GetLicensesByOrg(int orgId);
+        Task<IHTTPResult<List<LicenseAPI.LicenseResponse>>> GetLicensesByOrg(int orgId);
 
 
 		[Get("/api/Licenses/licensesOrgProg")]
-		Task<LicenseAPI.LicenseResponse> GetLicensesByOrgWithProg(int orgId, int programId);
+        Task<IHTTPResult<List<LicenseAPI.LicenseResponse>>> GetLicensesByOrgWithProg(int orgId, int programId);
 
 
 		[Post("/api/Licenses/create")]
-		Task CreateLicense([Body] LicenseAPI.LicenseRequest licenseData);
+        Task<IHTTPResult<string>> CreateLicense([Body] LicenseAPI.LicenseRequest licenseData);
 
 
 		[Delete("/api/Licenses/delete")]
@@ -23,37 +23,37 @@ namespace LicenseServerApp.Utils.Interfaces
 		///
 
 		[Get("/api/Organizations/organizations")]
-		Task<List<LicenseAPI.LicenseResponse>> GetOrganizationsByPages(int page, int pageSize);
+		Task<IHTTPResult<PagedResult<OrganizationsLiceses>>> GetOrganizationsByPages(int page, int pageSize);
 
 
 		[Post("/api/Organizations/create")]
-		Task CreateOrganization([Body] OrganizationAPI.OrganizationRequest licenseData);
+        Task<IHTTPResult<string>> CreateOrganization([Body] OrganizationAPI.OrganizationRequest licenseData);
 
 		///
 
         [Get("/api/Tarifs/tarifs")]
-		Task<List<LicenseAPI.LicenseResponse>> GetAllTarifs();
+        Task<IHTTPResult<List<TarifAPI.TarifResponse>>> GetAllTarifs();
 
 
 		[Get("/api/Tarifs/tarifsId")]
-		Task<List<LicenseAPI.LicenseResponse>> GetTariffById(int tarifId);
+        Task<IHTTPResult<TarifAPI.TarifResponse>> GetTarifById(int tarifId);
 
 
 		[Post("/api/Tarifs/create")]
-		Task CreateTarif([Body] TarifAPI.TarifRequest tarif);
+        Task<IHTTPResult<string>> CreateTarif([Body] TarifAPI.TarifRequest tarif);
 
 		///
 
 		[Post("/api/User/authorization")]
-		Task<UserAPI.UserResponse> UserLogin(UserAPI.UserAuthentificationRequest user);
+		Task<IHTTPResult<string>> UserLogin(UserAPI.UserAuthentificationRequest user);
 
 
 		[Post("/api/User/registration")]
-		Task<List<LicenseAPI.LicenseResponse>> UserRegistration(UserAPI.UserRegistrationRequest user);
+		Task<IHTTPResult<string>> UserRegistration([Body] UserAPI.UserRegistrationRequest user);
 
 
 		[Get("/api/User/check-token")]
-		Task<string> CheckToken();
+		Task<IHTTPResult<string>> CheckToken();
 
 	}
 }

@@ -1,39 +1,19 @@
-﻿@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script type="text/javascript">
-        function getToken() 
-        {
-            $.ajax({
-                    url: '@Url.Action("GetCurrentToken", "Home")',
-                    type: 'GET',
-                    success: function (data) { 
-                        Swal.fire
-                        (
-                            {
-                                title: 'Токен получен',
-                                text: "Успешно!",
-                                icon: 'success',
-                                showConfirmButton: true
-                            }
-                        );
-                        $("#tokenInput").val(data);
-                    },
-                    error: function () {
-                        alert('Ошибка при выполнении действия');
-                    }
-                }
-             );
-        }
-    </script>
-}
+﻿<script type="text/javascript">
+    function getToken() {
+        $.ajax({
+            url: '@Url.Action("GetCurrentToken", "Home")',
+            type: 'POST',
+            error: function () {
+                alert('Ошибка при выполнении действия');
+            }
+        });
+    }
+</script>
 
 <div class="row">
     <div class="col">
         <label>Текущий токен: </label>
         <input readonly="readonly" id="tokenInput" />
         <button style="width:125px" class="btn btn-success" onclick="getToken()">Получить</button>
-
     </div>
 </div>

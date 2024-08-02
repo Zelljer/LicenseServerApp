@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace LicenseServerApp.Models
 {
@@ -15,11 +16,15 @@ namespace LicenseServerApp.Models
 		}
 		public class OrganizationRequest
 		{
-			public string Inn { get; set; }
-			public string? Kpp { get; set; }
-			[DataType(DataType.EmailAddress)]
+            [JsonProperty("inn")]
+            public string Inn { get; set; }
+            [JsonProperty("kpp")]
+            public string? Kpp { get; set; }
+            [JsonProperty("email")]
+            [DataType(DataType.EmailAddress)]
 			public string Email { get; set; }
-			public string Phone { get; set; }
+            [JsonProperty("phone")]
+            public string Phone { get; set; }
 		}
 	}
 }

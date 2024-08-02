@@ -1,7 +1,8 @@
 using LicenseServerApp.Models;
 using LicenseServerApp.Utils.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace LicenseServerApp.Controllers
@@ -17,21 +18,27 @@ namespace LicenseServerApp.Controllers
 
         public async Task<IActionResult> UserRegistration(UserAPI.UserRegistrationRequest user)
         {
-            await apiProxy.UserRegistration(user);
-            return View();
+            var result = await apiProxy.UserRegistration(user);
+            logger.LogError(result.Data);
+            return RedirectToAction("Index");
         }
 
 		public async Task<IActionResult> UserAuthentification(UserAPI.UserAuthentificationRequest user)
 		{
-            await apiProxy.UserLogin(user);
-            logger.LogError(apiProxy.UserLogin(user).Result.Id.ToString());
+            var result = await apiProxy.UserLogin(user);
+            Response.Cookies.Append("Authorization", result.Data, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
             return RedirectToAction("Index");
-
         }
 
-        public async Task<string> GetCurrentToken()
+        public string GetCurrentToken()
         {
-            return await apiProxy.CheckToken();
+            var result = apiProxy.CheckToken();
+            return result.Result.Data;
         }
 
         #endregion
@@ -39,60 +46,71 @@ namespace LicenseServerApp.Controllers
         #region License
         public async Task<IActionResult> CreateLicense(LicenseAPI.LicenseRequest license)
         {
-            await apiProxy.CreateLicense(license);
-            return View();
+            var result = await apiProxy.CreateLicense(license);
+            logger.LogError(result.Data);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> DeleteLicense(int licenseId)
         {
             await apiProxy.DeleteLicense(licenseId);
-            return View();
+            return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> GetLicenses(int orgId, int? program)
+        public async Task<IActionResult> GetLicensesByOrg(int orgId)
         {
-            if (program != null) 
-                await apiProxy.GetLicensesByOrgWithProg(orgId, (int)program);
-            else
-                await apiProxy.GetLicensesByOrg(orgId);
-            return View();
+
+            var result = await apiProxy.GetLicensesByOrg(orgId);
+            return PartialView("Partials/License/_LicenseListByOrgPartial", result.Data);
+        }
+
+        public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId)
+        {
+
+            var result = await apiProxy.GetLicensesByOrgWithProg(orgId,programId);
+            return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", result.Data);
         }
         #endregion
 
         #region Organization
         public async Task<IActionResult> CreateOrganization(OrganizationAPI.OrganizationRequest organization)
         {
-            await apiProxy.CreateOrganization(organization);
-            return View();
+            var result = await apiProxy.CreateOrganization(organization);
+            logger.LogError(result.Data);
+            return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> GetLicenses(int page, int pageSize)
+        public async Task<IActionResult> GetOrganizationsByPages(int page, int pageSize)
         {
-            await apiProxy.GetOrganizationsByPages(page, pageSize);
-            return View();
+            var result = await apiProxy.GetOrganizationsByPages(page, pageSize);
+            return PartialView("Partials/Organization/_OrganizationListByPagePartial", result.Data); 
         }
         #endregion
 
         #region Tarifs
-        public async Task<IActionResult> CreateTarif(LicenseAPI.LicenseRequest license)
+        public async Task<IActionResult> CreateTarif(TarifAPI.TarifRequest tarif)
         {
-            await apiProxy.CreateLicense(license);
+            var result = await apiProxy.CreateTarif(tarif);
+            logger.LogError(result.Data);
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> DeleteTarif(int tarifId)
+        {
+            await apiProxy.DeleteLicense(tarifId);
             return View();
         }
 
-        public async Task<IActionResult> DeleteTarif(int licenseId)
+        public async Task<IActionResult> GetTarifs()
         {
-            await apiProxy.DeleteLicense(licenseId);
+            await apiProxy.GetAllTarifs();
             return View();
         }
 
-        public async Task<IActionResult> GetTarifs(int? tarifId)
+        public async Task<IActionResult> GetTarifById(int tarifid)
         {
-            if (tarifId != null)
-                await apiProxy.GetTariffById((int)tarifId);
-            else
-                await apiProxy.GetAllTarifs();
-            return View();
+            var result = await apiProxy.GetTarifById(tarifid);
+            return PartialView("Partials/Tarif/_TaridByIdPartial", result.Data);
         }
         #endregion
 
@@ -105,28 +123,32 @@ namespace LicenseServerApp.Controllers
 				case 0:
 					model = new List<LicenseAPI.LicenseResponse>(); name = "License/_LicenseListByOrgPartial"; break;
                 case 1:
-                    model = new LicenseAPI.LicenseRequest(); name = "License/_LicenseCreatePartial"; break;
+                    model = new List<LicenseAPI.LicenseResponse>(); name = "License/_LicenseListByOrgWithProgPartial"; break;
                 case 2:
+                    model = new LicenseAPI.LicenseRequest(); name = "License/_LicenseCreatePartial"; break;
+                case 3:
                     model = new LicenseAPI.LicenseResponse(); ; name = "License/_LicenseDeletePartial"; break;
 
 
-                case 3:
-                    model = new List<OrganizationAPI.OrganizationResponse>(); name = "Organization/_OrganizationListByPagePartial"; break;
                 case 4:
+                    model = new PagedResult<OrganizationsLiceses>(); name = "Organization/_OrganizationListByPagePartial"; break;
+                case 5:
                     model = new OrganizationAPI.OrganizationRequest(); name = "Organization/_OrganizationAddPartial"; break;
 
 
-                case 5:
-                    model = new List<TarifAPI.TarifResponse>(); name = "Tarif/_TarifListPartial"; break;
                 case 6:
+                    model = apiProxy.GetAllTarifs().Result.Data; name = "Tarif/_TarifListPartial"; break;
+                case 7:
+                    model = new TarifAPI.TarifResponse(); name = "Tarif/_TaridByIdPartial"; break;
+                case 8:
                     model = new TarifAPI.TarifRequest(); name = "Tarif/_TarifAddPartial"; break;
 
 
-                case 7:
-                    model = new UserAPI.UserAuthentificationRequest(); name = "User/_UserLoginPartial"; break;
-                case 8:
-                    model = new UserAPI.UserRegistrationRequest(); name = "User/_UserRegistrationPartial"; break;
                 case 9:
+                    model = new UserAPI.UserAuthentificationRequest(); name = "User/_UserLoginPartial"; break;
+                case 10:
+                    model = new UserAPI.UserRegistrationRequest(); name = "User/_UserRegistrationPartial"; break;
+                case 11:
                     model = ""; name = "User/_UserGetCurrentTokenPartial"; break;
 
             }
