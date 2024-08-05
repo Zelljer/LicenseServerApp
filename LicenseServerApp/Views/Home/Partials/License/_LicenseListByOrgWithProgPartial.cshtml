@@ -5,7 +5,7 @@
         $.ajax({
             url: '@Url.Action("GetLicensesByOrgWithProg", "Home")',
             type: 'GET',
-            data: { orgId: $("#orgInput").val(), program: $("#progSelect").prop('selectedIndex') },
+            data: { orgId: $("#orgInput").val(), programId: $("#progSelect").prop('selectedIndex') },
             success: function (data) {
                 $('#dataContainer').html(data);
             },
@@ -26,7 +26,7 @@
                 <select class="form-control" id="progSelect" style="width:125px">
                     @foreach (var item in Enum.GetValues(typeof(ProgramType)))
                     {
-                        <option>@item.ToString()</option>
+                        <option value=@item>@item.ToString()</option>
                     }
                 </select>
                 <button style="width:125px" class="btn btn-success" onclick="updateLicenseList()">Получить</button>

@@ -6,12 +6,18 @@ namespace LicenseServerApp.Models
 	{
 		public class TarifResponse
 		{
-			public int Id { get; set; }
-			public string Name { get; set; }
-			public string Program { get; set; }
-			public long Price { get; set; }
-			public int DaysCount { get; set; }
+            [JsonProperty("id")]
+            public int Id { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
+            [JsonProperty("program")]
+            public string Program { get; set; }
+            [JsonProperty("price")]
+            public long Price { get; set; }
+            [JsonProperty("daysCount")]
+            public int DaysCount { get; set; }
 		}
+
 		public class TarifRequest
 		{
             [JsonProperty("name")]
@@ -24,4 +30,14 @@ namespace LicenseServerApp.Models
             public int DaysCount { get; set; }
 		}
 	}
+
+    public class TarifResult
+    {
+        [JsonProperty("isSuccsess")]
+        public bool IsSuccsess { get; set; }
+        [JsonProperty("data")]
+        public TarifAPI.TarifResponse Data { get; set; }
+        [JsonProperty("errors")]
+        public string[] Errors { get; set; }
+    }
 }

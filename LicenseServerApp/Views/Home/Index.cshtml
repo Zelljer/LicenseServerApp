@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Сервер лицензй";
 }
 
@@ -25,6 +26,7 @@
 <div class="row">
     <div class="row">
         <div class="row">
+            <label>Выберите действие: </label>
             <select name="sort" onchange="changePartial()" id="partialList">
                 <option value="1">Получить лицензии по Id организации</option>
                 <option value="2">Получить лицензии по Id организации по определенной программе</option>
@@ -46,9 +48,28 @@
     </div>
 </div>
 
+@if (TempData["AlertMessage"] != null)
+{
+    <br />
+    <div class="row">
+        <div class="row">
+            <div class="row">
+                <div class="alert alert-info">
+                    @if (TempData["AlertMessage"] is string[] errors)
+                    {
+                        @foreach (var error in errors)
+                        {
+                            <li>@error</li>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <br />
 
 <div id="dataContainer">
-    <label>Выберите действие: </label>
     @await Html.PartialAsync("Partials/User/_UserLoginPartial", new UserAPI.UserAuthentificationRequest())
 </div>
