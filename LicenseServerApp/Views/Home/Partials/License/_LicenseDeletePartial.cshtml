@@ -4,6 +4,9 @@
             url: '@Url.Action("DeleteLicense", "Home")',
             type: 'POST',
             data: { licenseId: $("#idInput").val() },
+			success: function (data) {
+				$('#dataContainer').html(data);
+			},
             error: function () {
                 alert('Ошибка при выполнении действия');
             }

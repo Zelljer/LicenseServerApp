@@ -2,7 +2,7 @@
 
 namespace LicenseServerApp.Models
 {
-    public class StringResult
+	public class StringResult
     {
         [JsonProperty("isSuccsess")]
         public bool IsSuccsess { get; set; }

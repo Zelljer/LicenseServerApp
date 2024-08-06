@@ -90,15 +90,21 @@ namespace LicenseServerApp.Controllers
 			}
         }
 
-        public string GetCurrentToken()
+        public async Task<IActionResult> GetCurrentToken()
         {
             try
             {
-                var result = apiProxy.CheckToken();
-                if (result.Result.IsSuccessStatusCode)
+                var result = await apiProxy.CheckToken();
+                if (result.IsSuccessStatusCode)
                 {
-                    if (result.Result.Content.IsSuccsess)
-                        return result.Result.Content.Data.ToString();
+                    if (result.Content.IsSuccsess)
+                        return PartialView("Partials/User/_UserGetCurrentTokenPartial", result.Content.Data);
+                    else
+                    {
+                        TempData["AlertMessage"] = result.Content.Errors;
+                        foreach (var error in result.Content.Errors)
+                            logger.LogError(error);
+                    }
                 }
                 else
                 {
@@ -106,12 +112,12 @@ namespace LicenseServerApp.Controllers
                     TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                 }
-                return "";
+                return PartialView("Partials/User/_UserGetCurrentTokenPartial");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return "";
+                return PartialView("Partials/User/_UserGetCurrentTokenPartial");
             }
         }
 
@@ -153,7 +159,7 @@ namespace LicenseServerApp.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteLicense(int licenseId)
+		public async Task<IActionResult> DeleteLicense(int licenseId)
         {
             try
             {
@@ -161,16 +167,12 @@ namespace LicenseServerApp.Controllers
                 if (result.IsSuccessStatusCode)
                 {
 					if (result.Content.IsSuccsess)
-					{
 						TempData["AlertMessage"] = new[] { result.Content.Data };
-						return RedirectToAction("Index");
-					}
 					else
                     {
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-                        return RedirectToAction("Index");
                     }
                 }
                 else
@@ -178,14 +180,14 @@ namespace LicenseServerApp.Controllers
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
                     TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-                    return RedirectToAction("Index");
                 }
-            }
+				return PartialView("Partials/License/_LicenseDeletePartial");
+			}
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return RedirectToAction("Index");
-            }
+				return PartialView("Partials/License/_LicenseDeletePartial");
+			}
         }
 
         public async Task<IActionResult> GetLicensesByOrg(int orgId)

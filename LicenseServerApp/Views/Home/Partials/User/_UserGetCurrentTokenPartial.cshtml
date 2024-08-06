@@ -1,8 +1,13 @@
-﻿<script type="text/javascript">
+﻿@model string
+
+<script type="text/javascript">
     function getToken() {
         $.ajax({
             url: '@Url.Action("GetCurrentToken", "Home")',
-            type: 'POST',
+            type: 'GET',
+            success: function (data) {
+                $('#dataContainer').html(data);
+            },
             error: function () {
                 alert('Ошибка при выполнении действия');
             }
@@ -12,27 +17,27 @@
 
 @if (TempData["AlertMessage"] != null)
 {
-	<div class="row">
-		<div class="row">
-			<div class="row">
-				<div class="alert alert-info">
-					@if (TempData["AlertMessage"] is string[] errors)
-					{
-						@foreach (var error in errors)
-						{
-							<li>@error</li>
-						}
-					}
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="row">
+            <div class="row">
+                <div class="alert alert-info">
+                    @if (TempData["AlertMessage"] is string[] errors)
+                    {
+                        @foreach (var error in errors)
+                        {
+                            <li>@error</li>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 <div class="row">
     <div class="col">
         <label>Текущий токен: </label>
-        <input readonly="readonly" id="tokenInput" />
+        <input readonly="readonly" id="tokenInput" value="@Model" />
         <button style="width:125px" class="btn btn-success" onclick="getToken()">Получить</button>
     </div>
 </div>

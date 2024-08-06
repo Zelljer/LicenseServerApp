@@ -1,24 +1,5 @@
 ﻿@model UserAPI.UserAuthentificationRequest;
 
-@if (TempData["AlertMessage"] != null)
-{
-	<div class="row">
-		<div class="row">
-			<div class="row">
-				<div class="alert alert-info">
-					@if (TempData["AlertMessage"] is string[] errors)
-					{
-						@foreach (var error in errors)
-						{
-							<li>@error</li>
-						}
-					}
-				</div>
-			</div>
-		</div>
-	</div>
-}
-
 <div class="row">
 	<div class="col">
 		@using (Html.BeginForm("UserAuthentification", "Home", FormMethod.Post))
