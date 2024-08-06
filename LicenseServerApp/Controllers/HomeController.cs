@@ -37,7 +37,7 @@ namespace LicenseServerApp.Controllers
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                     return RedirectToAction("Index");
                 }
@@ -103,7 +103,7 @@ namespace LicenseServerApp.Controllers
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                 }
                 return "";
@@ -135,13 +135,13 @@ namespace LicenseServerApp.Controllers
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-                       return PartialView("Partials/License/_LicenseCreatePartial", result.Content.Data);
+                        return RedirectToAction("Index");
                     }
                 }
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                     return RedirectToAction("Index");
                 }
@@ -160,9 +160,12 @@ namespace LicenseServerApp.Controllers
                 var result = await apiProxy.DeleteLicense(licenseId);
                 if (result.IsSuccessStatusCode)
                 {
-                    if (result.Content.IsSuccsess)
-                        return RedirectToAction("Index");
-                    else
+					if (result.Content.IsSuccsess)
+					{
+						TempData["AlertMessage"] = new[] { result.Content.Data };
+						return RedirectToAction("Index");
+					}
+					else
                     {
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
@@ -173,7 +176,7 @@ namespace LicenseServerApp.Controllers
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                     return RedirectToAction("Index");
                 }
@@ -199,22 +202,22 @@ namespace LicenseServerApp.Controllers
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
+						return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
+					}
                 }
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+					return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
+				}
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return RedirectToAction("Index");
-            }
+				return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
+			}
         }
 
         public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId)
@@ -231,22 +234,22 @@ namespace LicenseServerApp.Controllers
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
+						return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+					}
                 }
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+				}
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return RedirectToAction("Index");
-            }
+				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+			}
         }
         #endregion
 
@@ -274,7 +277,7 @@ namespace LicenseServerApp.Controllers
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                     return RedirectToAction("Index");
                 }
@@ -297,24 +300,24 @@ namespace LicenseServerApp.Controllers
                         return PartialView("Partials/Organization/_OrganizationListByPagePartial", result.Content.Data);
                     else
                     {
-                        TempData["AlertMessage"] = result.Content.Errors;
+                        TempData["AlertMessage"] =  result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-                        return RedirectToAction("Index");
+                        return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>()});
                     }
                 }
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-                    return RedirectToAction("Index");
+                    return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>() });
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return RedirectToAction("Index");
+                return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>() });
             }
         }
         #endregion
@@ -355,35 +358,35 @@ namespace LicenseServerApp.Controllers
             }
         }
 
-        public async Task<IActionResult> GetTarifs()
+        public List<TarifAPI.TarifResponse> GetTarifs()
         {
             try
             {
-                var result = await apiProxy.GetAllTarifs();
-                if (result.IsSuccessStatusCode)
+                var result = apiProxy.GetAllTarifs();
+                if (result.Result.IsSuccessStatusCode)
                 {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/Tarif/_TarifListPartial", result.Content.Data);
+                    if (result.Result.Content.IsSuccsess)
+                        return result.Result.Content.Data;
                     else
                     {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
+                        TempData["AlertMessage"] = result.Result.Content.Errors;
+                        foreach (var error in result.Result.Content.Errors)
                             logger.LogError(error);
-                        return RedirectToAction("Index");
+                        return [];
                     }
                 }
                 else
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-                    return RedirectToAction("Index");
+                    return [];
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                return RedirectToAction("Index");
+                return [];
             }
         }
 
@@ -407,7 +410,7 @@ namespace LicenseServerApp.Controllers
                 else 
                 {
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = errorText;
+                    TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
                     return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
                 }
@@ -450,7 +453,7 @@ namespace LicenseServerApp.Controllers
 
 
                 case 6:
-                    await GetTarifs(); break;
+                    model = GetTarifs(); name = "Tarif/_TarifListPartial"; break;
                 case 7:
                     model = new TarifAPI.TarifResponse(); name = "Tarif/_TaridByIdPartial"; break;
                 case 8:

@@ -33,13 +33,13 @@ namespace LicenseServerApp.Models
         }
     }
 
-        public class OrganizationResult
-        {
-            [JsonProperty("isSuccsess")]
-            public bool IsSuccsess { get; set; }
-            [JsonProperty("data")]
-            public OrganizationAPI.OrganizationResponse Data { get; set; }
-            [JsonProperty("errors")]
-            public string[] Errors { get; set; }
-        }
+    public class OrganizationsResult
+    {
+        [JsonProperty("isSuccsess")]
+        public bool IsSuccsess { get; set; }
+        [JsonProperty("data")]
+        public PagedResult<OrganizationsLiceses> Data { get; set; }
+        [JsonProperty("errors")]
+        public string[] Errors { get; set; }
+    }
 }

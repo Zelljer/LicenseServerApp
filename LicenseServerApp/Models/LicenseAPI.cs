@@ -31,13 +31,13 @@ namespace LicenseServerApp.Models
         }
     }
 
-        public class LicenseResult
+    public class LicensesResult
     {
-            [JsonProperty("isSuccsess")]
-            public bool IsSuccsess { get; set; }
-            [JsonProperty("data")]
-            public LicenseAPI.LicenseResponse Data { get; set; }
-            [JsonProperty("errors")]
-            public string[] Errors { get; set; }
-        }
+        [JsonProperty("isSuccsess")]
+        public bool IsSuccsess { get; set; }
+        [JsonProperty("data")]
+        public List<LicenseAPI.LicenseResponse> Data { get; set; }
+        [JsonProperty("errors")]
+        public string[] Errors { get; set; }
+    }
 }

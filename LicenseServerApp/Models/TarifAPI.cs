@@ -40,4 +40,14 @@ namespace LicenseServerApp.Models
         [JsonProperty("errors")]
         public string[] Errors { get; set; }
     }
+
+    public class TarifsResult
+    {
+        [JsonProperty("isSuccsess")]
+        public bool IsSuccsess { get; set; }
+        [JsonProperty("data")]
+        public List<TarifAPI.TarifResponse> Data { get; set; }
+        [JsonProperty("errors")]
+        public string[] Errors { get; set; }
+    }
 }

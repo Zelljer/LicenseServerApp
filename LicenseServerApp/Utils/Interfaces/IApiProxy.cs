@@ -6,11 +6,11 @@ namespace LicenseServerApp.Utils.Interfaces
 	public interface IApiProxy
 	{
         [Get("/api/Licenses/licensesOrg")]
-        Task<IApiResponse<LicenseResult>> GetLicensesByOrg(int orgId);
+        Task<IApiResponse<LicensesResult>> GetLicensesByOrg(int orgId);
 
 
 		[Get("/api/Licenses/licensesOrgProg")]
-        Task<IApiResponse<LicenseResult>> GetLicensesByOrgWithProg(int orgId, int programId);
+        Task<IApiResponse<LicensesResult>> GetLicensesByOrgWithProg(int orgId, int programId);
 
 
 		[Post("/api/Licenses/create")]
@@ -23,7 +23,7 @@ namespace LicenseServerApp.Utils.Interfaces
 		///
 
 		[Get("/api/Organizations/organizations")]
-		Task<IApiResponse<OrganizationResult>> GetOrganizationsByPages(int page, int pageSize);
+		Task<IApiResponse<OrganizationsResult>> GetOrganizationsByPages(int page, int pageSize);
 
 
 		[Post("/api/Organizations/create")]
@@ -32,7 +32,7 @@ namespace LicenseServerApp.Utils.Interfaces
 		///
 
         [Get("/api/Tarifs/tarifs")]
-        Task<IApiResponse<TarifResult>> GetAllTarifs();
+        Task<IApiResponse<TarifsResult>> GetAllTarifs();
 
 
 		[Get("/api/Tarifs/tarifsId")]
