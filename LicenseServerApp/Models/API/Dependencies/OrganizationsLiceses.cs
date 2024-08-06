@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using LicenseServerApp.Models.API;
+using Newtonsoft.Json;
 
-namespace LicenseServerApp.Models
+namespace LicenseServerApp.Models.API.Dependencies
 {
     public class OrganizationsLiceses
     {

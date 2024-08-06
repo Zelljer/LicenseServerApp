@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace LicenseServerApp.Models
+namespace LicenseServerApp.Models.API.Dependencies
 {
     public class PagedResult<T>
     {

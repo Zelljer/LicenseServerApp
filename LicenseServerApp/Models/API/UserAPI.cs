@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json;
 
-namespace LicenseServerApp.Models
+namespace LicenseServerApp.Models.API
 {
-	public class UserAPI
-	{
-		public class UserResponse
-		{
+    public class UserAPI
+    {
+        public class UserResponse
+        {
             [JsonProperty("id")]
             public int Id { get; set; }
             [JsonProperty("login")]
@@ -21,12 +21,12 @@ namespace LicenseServerApp.Models
             public string Patronymic { get; set; }
             [JsonProperty("role")]
             public string Role { get; set; }
-		}
+        }
 
-		public class UserRegistrationRequest
-		{
-			[JsonProperty("login")]
-			public string Login { get; set; }
+        public class UserRegistrationRequest
+        {
+            [JsonProperty("login")]
+            public string Login { get; set; }
 
             [JsonProperty("password")]
             public string Password { get; set; }
@@ -43,14 +43,14 @@ namespace LicenseServerApp.Models
             [JsonProperty("role")]
             public int Role { get; set; }
         }
-		public class UserAuthentificationRequest
-		{
-			[JsonProperty("login")]
-			public string Login { get; set; }
+        public class UserAuthentificationRequest
+        {
+            [JsonProperty("login")]
+            public string Login { get; set; }
 
-			[JsonProperty("password")]
-			public string Password { get; set; }
-		}
-	}
+            [JsonProperty("password")]
+            public string Password { get; set; }
+        }
+    }
 }
 

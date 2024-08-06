@@ -1,7 +1,10 @@
 using LicenseServerApp.Models;
+using LicenseServerApp.Models.API;
+using LicenseServerApp.Models.API.Dependencies;
 using LicenseServerApp.Utils.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace LicenseServerApp.Controllers
 {
@@ -204,7 +207,6 @@ namespace LicenseServerApp.Controllers
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-						return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
 					}
                 }
                 else
@@ -212,8 +214,8 @@ namespace LicenseServerApp.Controllers
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
                     TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-					return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
 				}
+                return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
             }
             catch (Exception ex)
             {
@@ -425,8 +427,12 @@ namespace LicenseServerApp.Controllers
         }
         #endregion
 
-        public async Task<IActionResult> SetPartial(int partialId)
+        public async Task<IActionResult> ReloadView(string viewName, object model)
 		{
+            return PartialView("Partials/" + viewName, model);
+		}
+			public async Task<IActionResult> SetPartial(int partialId)
+		    {
             var organizationsViewData = new PagedResult<OrganizationsLiceses>()
             {
                 Items = new List<OrganizationsLiceses>(),

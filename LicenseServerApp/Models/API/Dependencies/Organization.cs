@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace LicenseServerApp.Models
+namespace LicenseServerApp.Models.API.Dependencies
 {
-    public class Organization 
+    public class Organization
     {
         [JsonProperty("id")]
         public int Id { get; set; }

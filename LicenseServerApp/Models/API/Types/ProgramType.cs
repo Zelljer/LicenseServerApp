@@ -1,4 +1,4 @@
-﻿namespace LicenseServerApp.Models
+﻿namespace LicenseServerApp.Models.API.Types
 {
     public enum ProgramType
     {

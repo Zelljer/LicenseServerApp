@@ -1,9 +1,9 @@
-﻿using LicenseServerApp.Models;
+﻿using LicenseServerApp.Models.API;
 using Refit;
 
 namespace LicenseServerApp.Utils.Interfaces
 {
-	public interface IApiProxy
+    public interface IApiProxy
 	{
         [Get("/api/Licenses/licensesOrg")]
         Task<IApiResponse<LicensesResult>> GetLicensesByOrg(int orgId);
