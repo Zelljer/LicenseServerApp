@@ -6,8 +6,10 @@ namespace LicenseServerApp.Models.API.Dependencies
     {
         [JsonProperty("id")]
         public int Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
         [JsonProperty("inn")]
-        public required string Inn { get; set; }
+        public string Inn { get; set; }
         [JsonProperty("kpp")]
         public string Kpp { get; set; }
         [JsonProperty("email")]

@@ -1,9 +1,19 @@
-﻿@model OrganizationAPI.OrganizationRequest;
+﻿@using LicenseServerApp.Models.API
+@model OrganizationAPI.OrganizationRequest;
 
 <div class="row">
 	<div class="col">
 		@using (Html.BeginForm("CreateOrganization", "Home", FormMethod.Post))
 		{
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Название</label>
+						@Html.TextBoxFor(x => x.Name, "", new { @class = "form-control", @placeholder = "", @id = "Name" })
+					</div>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="row">
 					<div class="row">

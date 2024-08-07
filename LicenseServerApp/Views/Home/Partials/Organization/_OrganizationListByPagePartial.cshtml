@@ -1,4 +1,6 @@
-﻿@model PagedResult<OrganizationsLiceses>
+﻿@using LicenseServerApp.Models.API.Dependencies
+@using LicenseServerApp.Models.View
+@model PagedResult<OrganizationView>
 
 <script type="text/javascript">
     function updatePartial() {
@@ -59,58 +61,37 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Имя</th>
                     <th>ИНН</th>
                     <th>КПП</th>
                     <th>Ел. почта</th>
                     <th>Телефон</th>
-                    <th>Лицензии</th>
+                    <th>Программа</th>
+                    <th>Тариф</th>
+                    <th>Дата создания лицензии</th>
+                    <th>Дата начала действия лицензии</th>
+                    <th>Дата конца действия лицензии</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Items.Any())
-                {
                     @foreach (var itemOrganization in Model.Items)
                     {
-                        <tr>
-                            <th>@Html.DisplayFor(modelItem => itemOrganization.Organization.Id)</th>
-                            <th>@Html.DisplayFor(modelItem => itemOrganization.Organization.Inn)</th>
-                            <th>@Html.DisplayFor(modelItem => itemOrganization.Organization.Kpp)</th>
-                            <th>@Html.DisplayFor(modelItem => itemOrganization.Organization.Email)</th>
-                            <th>@Html.DisplayFor(modelItem => itemOrganization.Organization.Phone)</th>
-                           <th>
-                                @if (itemOrganization.Licenses.Any())
-                                {
-                                    <table class="table table-stroiped">
-                                        <thead>
-                                            <tr>
-                                                <th>Id лицензии</th>
-                                                <th>Id тарифа</th>
-                                                <th>Дата создания</th>
-                                                <th>Дата начала действия</th>
-                                                <th>Дата истеченя срока</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                @foreach (var itemLicense in itemOrganization.Licenses)
-                                                {
-                                                        <tr>
-                                                            <th>@Html.DisplayFor(modelItem => itemLicense.Id)</th>
-                                                            <th>@Html.DisplayFor(modelItem => itemLicense.TarifId)</th>
-                                                            <th>@Html.DisplayFor(modelItem => itemLicense.DateCreated)</th>
-                                                            <th>@Html.DisplayFor(modelItem => itemLicense.StartDate)</th>
-                                                            <th>@Html.DisplayFor(modelItem => itemLicense.EndDate)</th>
-                                                        </tr>
-                                                }
-                                        </tbody>
-                                    </table>
-                                }
-                                else
-                                {
-                                    <p>У организации нет лицензий</p>
-                                }
-                           </th>
-                        </tr>
-                    }
+                        @if(itemOrganization != null)
+                        {
+                            <tr>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationId)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationName)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationInn)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationKpp)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationEmail)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationPhone)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.ProgramName)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.TarifName)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.DateCreated)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.StartDate)</th>
+                                <th>@Html.DisplayFor(modelItem => itemOrganization.EndDate)</th>
+                            </tr>
+                        }
                 }
             </tbody>
         </table>

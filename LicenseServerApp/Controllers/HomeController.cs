@@ -1,10 +1,11 @@
 using LicenseServerApp.Models;
 using LicenseServerApp.Models.API;
 using LicenseServerApp.Models.API.Dependencies;
+using LicenseServerApp.Models.View;
 using LicenseServerApp.Utils.Interfaces;
+using LicenseServerApp.Utils.Converters;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace LicenseServerApp.Controllers
 {
@@ -224,11 +225,15 @@ namespace LicenseServerApp.Controllers
 			}
         }
 
-        public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId)
+        public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId) // Буду исправлять
         {
+            var currentList = new List<LicenseAPI.LicenseResponse>();
             try
             {
+                var errors = new List<string>();
                 var result = await apiProxy.GetLicensesByOrgWithProg(orgId, programId);
+                var tarifs = GetTarifs();
+                var organizations = await apiProxy.GetOrganizationsByPages(orgId, programId);
                 if (result.IsSuccessStatusCode)
                 {
                     if (result.Content.IsSuccsess)
@@ -238,7 +243,7 @@ namespace LicenseServerApp.Controllers
                         TempData["AlertMessage"] = result.Content.Errors;
                         foreach (var error in result.Content.Errors)
                             logger.LogError(error);
-						return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+						return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
 					}
                 }
                 else
@@ -246,13 +251,13 @@ namespace LicenseServerApp.Controllers
                     var errorText = "Произошла ошибка при отправке запроса на сервер";
                     TempData["AlertMessage"] = new[] { errorText };
                     logger.LogError(errorText);
-					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
 				}
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", new List<LicenseAPI.LicenseResponse>());
+				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
 			}
         }
         #endregion
@@ -262,6 +267,7 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
+
                 var result = await apiProxy.CreateOrganization(organization);
                 if (result.IsSuccessStatusCode)
                 {
@@ -295,33 +301,39 @@ namespace LicenseServerApp.Controllers
 
         public async Task<IActionResult> GetOrganizationsByPages(int page, int pageSize)
         {
+            var currentPage = new PagedResult<OrganizationView> { TotalPages = 1, CurrentPage = 1, Items = new List<OrganizationView>() };
             try
             {
+                var errors = new List<string>();
                 var result = await apiProxy.GetOrganizationsByPages(page, pageSize);
-                if (result.IsSuccessStatusCode)
+                var tarifs = GetTarifs();
+
+                if (!result.IsSuccessStatusCode)
+                    errors.Add("Произошла ошибка при отправке запроса на сервер");
+
+                else if (!result.Content.IsSuccsess)
+                    errors.AddRange(result.Content.Errors);
+
+                if (errors.Any())
                 {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/Organization/_OrganizationListByPagePartial", result.Content.Data);
-                    else
-                    {
-                        TempData["AlertMessage"] =  result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>()});
-                    }
+                    TempData["AlertMessage"] = errors.ToArray();
+                    foreach (var error in errors)
+                        logger.LogError(error);
+                    return PartialView("Partials/Organization/_OrganizationListByPagePartial", currentPage);
                 }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>() });
-                }
+
+                var data = result.Content.Data;
+                currentPage.TotalPages = data?.TotalPages ?? 1;
+                currentPage.CurrentPage = data?.TotalPages ?? 1;
+                currentPage.Items = DataConverter.ToOrganizationView(data?.Items ?? new List<OrganizationsLiceses>(), tarifs);
+
+                return PartialView("Partials/Organization/_OrganizationListByPagePartial", currentPage);
             }
             catch (Exception ex)
             {
+                TempData["AlertMessage"] = new[] { "Произошла ошибка" };
                 logger.LogError(ex.Message);
-                return PartialView("Partials/Organization/_OrganizationListByPagePartial", new PagedResult<OrganizationsLiceses>() { Items = new List<OrganizationsLiceses>() });
+                return PartialView("Partials/Organization/_OrganizationListByPagePartial", currentPage);
             }
         }
         #endregion
@@ -433,9 +445,9 @@ namespace LicenseServerApp.Controllers
 		}
 			public async Task<IActionResult> SetPartial(int partialId)
 		    {
-            var organizationsViewData = new PagedResult<OrganizationsLiceses>()
+            var organizationsViewData = new PagedResult<OrganizationView>()
             {
-                Items = new List<OrganizationsLiceses>(),
+                Items = new List<OrganizationView>(),
                 CurrentPage = 1,
                 TotalPages=1
             };
@@ -445,9 +457,9 @@ namespace LicenseServerApp.Controllers
             switch (partialId)
 			{
 				case 0:
-					model = new List<LicenseAPI.LicenseResponse>(); name = "License/_LicenseListByOrgPartial"; break;
+					model = new List<LicenseView>(); name = "License/_LicenseListByOrgPartial"; break;
                 case 1:
-                    model = new List<LicenseAPI.LicenseResponse>(); name = "License/_LicenseListByOrgWithProgPartial"; break;
+                    model = new List<LicenseView>(); name = "License/_LicenseListByOrgWithProgPartial"; break;
                 case 2:
                     model = new LicenseAPI.LicenseRequest(); name = "License/_LicenseCreatePartial"; break;
                 case 3:

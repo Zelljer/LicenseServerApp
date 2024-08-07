@@ -1,4 +1,6 @@
-﻿@model IEnumerable<LicenseAPI.LicenseResponse>
+﻿@using LicenseServerApp.Models.API.Types
+@using LicenseServerApp.Models.View
+@model IEnumerable<LicenseView>
 
 <script type="text/javascript">
     function updateLicenseList() {
@@ -55,8 +57,9 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Id организации</th>
-                    <th>Id тарифа</th>
+                    <th>Название организации</th>
+                    <th>Название программы</th>
+                    <th>Название тарифа</th>
                     <th>Дата создания</th>
                     <th>Дата начала действия</th>
                     <th>Дата истеченя срока</th>
@@ -66,12 +69,13 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <th>@Html.DisplayFor(modelItem => item.Id)</th>
-                        <th>@Html.DisplayFor(modelItem => item.OrganizationId)</th>
-                        <th>@Html.DisplayFor(modelItem => item.TarifId)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateCreated)</th>
-                        <th>@Html.DisplayFor(modelItem => item.StartDate)</th>
-                        <th>@Html.DisplayFor(modelItem => item.EndDate)</th>
+                        <th>@Html.DisplayFor(modelItem => item.LicenceId)</th>
+                        <th>@Html.DisplayFor(modelItem => item.OrganizationName)</th>
+                        <th>@Html.DisplayFor(modelItem => item.ProgramName)</th>
+                        <th>@Html.DisplayFor(modelItem => item.TarifName)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateCreate)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateStart)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateEnd)</th>
                     </tr>
                 }
             </tbody>
