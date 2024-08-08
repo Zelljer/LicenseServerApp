@@ -5,6 +5,7 @@
         $.ajax({
             url: '@Url.Action("GetCurrentToken", "Home")',
             type: 'GET',
+            xhrFields: { withCredentials: true },
             success: function (data) {
                 $('#dataContainer').html(data);
             },

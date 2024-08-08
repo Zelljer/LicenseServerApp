@@ -7,6 +7,7 @@
             url: '@Url.Action("GetTarifById", "Home")',
             type: 'GET',
             data: { tarifid: $("#tarifIdInput").val() },
+            xhrFields: { withCredentials: true },
             success: function (data) {
                 $('#dataContainer').html(data);
             },

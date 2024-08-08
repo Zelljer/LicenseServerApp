@@ -2,14 +2,14 @@ using LicenseServerApp.Models;
 using LicenseServerApp.Models.API;
 using LicenseServerApp.Models.API.Dependencies;
 using LicenseServerApp.Models.View;
-using LicenseServerApp.Utils.Interfaces;
 using LicenseServerApp.Utils.Converters;
+using LicenseServerApp.Utils.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace LicenseServerApp.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger, IApiProxy apiProxy) : Controller
+	public class HomeController(ILogger<HomeController> logger, IApi apiProxy) : Controller
 	{
 		public async Task<IActionResult> Index()
 		{
@@ -22,33 +22,31 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.UserRegistration(user);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                    {
-                        TempData["AlertMessage"] = new[] { result.Content.Data };
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+				var errors = new List<string>();
+				var result = await apiProxy.UserRegistration(user);
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return RedirectToAction("Index");
+				}
+
+                TempData["AlertMessage"] = new[] { result.Content.Data };
+                return RedirectToAction("Index");
+
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return RedirectToAction("Index");
             }
         }
@@ -57,39 +55,37 @@ namespace LicenseServerApp.Controllers
 		{
             try
             {
+                var errors = new List<string>();
                 var result = await apiProxy.UserLogin(user);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                    {
-                        Response.Cookies.Append("Authorization", result.Content.Data.ToString(), new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Strict
-                        });
-						TempData["AlertMessage"] = new [] { "Авторизация прошла успешно" };
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-						return RedirectToAction("Index");
-					}
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
+
+                if (!result.IsSuccessStatusCode)
+                    errors.Add("Ошибка при отправке запроса на сервер");
+
+                else if (!result.Content.IsSuccsess)
+                    errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
 					return RedirectToAction("Index");
 				}
+				
+                Response.Cookies.Append("Authorization", result.Content.Data.ToString(), new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
+				TempData["AlertMessage"] = new [] { "Авторизация прошла успешно" };
+                return RedirectToAction("Index");
+                   
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
 				return RedirectToAction("Index");
 			}
         }
@@ -98,29 +94,29 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.CheckToken();
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/User/_UserGetCurrentTokenPartial", result.Content.Data);
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                }
-                return PartialView("Partials/User/_UserGetCurrentTokenPartial");
+				var errors = new List<string>();
+				var result = await apiProxy.CheckToken();
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return PartialView("Partials/User/_UserGetCurrentTokenPartial");
+				}
+
+                return PartialView("Partials/User/_UserGetCurrentTokenPartial", result.Content.Data);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return PartialView("Partials/User/_UserGetCurrentTokenPartial");
             }
         }
@@ -132,33 +128,30 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.CreateLicense(license);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                    {
-                        TempData["AlertMessage"] = new[] { result.Content.Data };
-                        return RedirectToAction("Index");
-                    }
-					else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+				var errors = new List<string>();
+				var result = await apiProxy.CreateLicense(license);
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return RedirectToAction("Index");
+				}
+
+                TempData["AlertMessage"] = new[] { result.Content.Data };
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return RedirectToAction("Index");
             }
         }
@@ -167,97 +160,107 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.DeleteLicense(licenseId);
-                if (result.IsSuccessStatusCode)
-                {
-					if (result.Content.IsSuccsess)
-						TempData["AlertMessage"] = new[] { result.Content.Data };
-					else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                }
+				var errors = new List<string>();
+				var result = await apiProxy.DeleteLicense(licenseId);
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return PartialView("Partials/License/_LicenseDeletePartial");
+				}
+
+				TempData["AlertMessage"] = new[] { result.Content.Data };
 				return PartialView("Partials/License/_LicenseDeletePartial");
 			}
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
 				return PartialView("Partials/License/_LicenseDeletePartial");
 			}
         }
 
         public async Task<IActionResult> GetLicensesByOrg(int orgId)
         {
+            var currentLicense = new List<LicenseView>();
             try
             {
-                var result = await apiProxy.GetLicensesByOrg(orgId);
-                if (result.IsSuccessStatusCode)
+                var errors = new List<string>();
+                var licenseResult = await apiProxy.GetLicensesByOrg(orgId);
+                var tarifs = GetTarifs();
+                var organizationResult = await apiProxy.GetOrganizationById(orgId);
+
+                if (!licenseResult.IsSuccessStatusCode || !organizationResult.IsSuccessStatusCode)
+                    errors.Add("Ошибка при отправке запроса на сервер");
+
+                else if (!licenseResult.Content.IsSuccsess || !organizationResult.Content.IsSuccsess)
                 {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/License/_LicenseListByOrgPartial", result.Content.Data);
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-					}
+                    errors.AddRange(licenseResult.Content.Errors);
+                    errors.AddRange(organizationResult.Content.Errors);
                 }
-                else
+
+                if (errors.Any())
                 {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-				}
-                return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
+                    TempData["AlertMessage"] = errors.ToArray();
+                    foreach (var error in errors)
+                        logger.LogError(error);
+                    return PartialView("Partials/License/_LicenseListByOrgPartial", currentLicense);
+                }
+
+                currentLicense = DataConverter.ToLicenseView(licenseResult.Content.Data,tarifs,organizationResult.Content.Data).ToList();
+                return PartialView("Partials/License/_LicenseListByOrgPartial", currentLicense);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-				return PartialView("Partials/License/_LicenseListByOrgPartial", new List<LicenseAPI.LicenseResponse>());
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
+				return PartialView("Partials/License/_LicenseListByOrgPartial", currentLicense);
 			}
         }
 
         public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId) // Буду исправлять
         {
-            var currentList = new List<LicenseAPI.LicenseResponse>();
-            try
-            {
-                var errors = new List<string>();
-                var result = await apiProxy.GetLicensesByOrgWithProg(orgId, programId);
-                var tarifs = GetTarifs();
-                var organizations = await apiProxy.GetOrganizationsByPages(orgId, programId);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", result.Content.Data);
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-						return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
-					}
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
+			var currentLicense = new List<LicenseView>();
+			try
+			{
+				var errors = new List<string>();
+				var licenseResult = await apiProxy.GetLicensesByOrgWithProg(orgId, programId);
+				var tarifs = GetTarifs();
+				var organizationResult = await apiProxy.GetOrganizationById(orgId);
+
+				if (!licenseResult.IsSuccessStatusCode || !organizationResult.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!licenseResult.Content.IsSuccsess || !organizationResult.Content.IsSuccsess)
+				{
+					errors.AddRange(licenseResult.Content.Errors);
+					errors.AddRange(organizationResult.Content.Errors);
 				}
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentList);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentLicense);
+				}
+
+				currentLicense = DataConverter.ToLicenseView(licenseResult.Content.Data, tarifs, organizationResult.Content.Data).ToList();
+				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentLicense);
+			}
+			catch (Exception ex)
+			{
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
+				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentLicense);
 			}
         }
         #endregion
@@ -267,34 +270,31 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
+				var errors = new List<string>();
+				var result = await apiProxy.CreateOrganization(organization);
 
-                var result = await apiProxy.CreateOrganization(organization);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                    {
-                        TempData["AlertMessage"] = new[] { result.Content.Data };
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return RedirectToAction("Index");
+				}
+
+                TempData["AlertMessage"] = new[] { result.Content.Data };
+                return RedirectToAction("Index");
+                  
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return RedirectToAction("Index");
             }
         }
@@ -343,33 +343,30 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.CreateTarif(tarif);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                    {
-                        TempData["AlertMessage"] = new[] { result.Content.Data };
-                        return RedirectToAction("Index");
-                    }  
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return RedirectToAction("Index");
-                }
+				var errors = new List<string>();
+				var result = await apiProxy.CreateTarif(tarif);
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return RedirectToAction("Index");
+				}
+
+                TempData["AlertMessage"] = new[] { result.Content.Data };
+                return RedirectToAction("Index");   
             }
             catch(Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return RedirectToAction("Index");
             }
         }
@@ -378,30 +375,30 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
+				var errors = new List<string>();
+                //var auth = Request.Cookies["Authorization"];
                 var result = apiProxy.GetAllTarifs();
-                if (result.Result.IsSuccessStatusCode)
-                {
-                    if (result.Result.Content.IsSuccsess)
-                        return result.Result.Content.Data;
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Result.Content.Errors;
-                        foreach (var error in result.Result.Content.Errors)
-                            logger.LogError(error);
-                        return [];
-                    }
-                }
-                else
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return [];
-                }
+
+				if (!result.Result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Result.Content.IsSuccsess)
+					errors.AddRange(result.Result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return [];
+				}
+
+                return result.Result.Content.Data;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError(ex.Message);
                 return [];
             }
         }
@@ -410,30 +407,30 @@ namespace LicenseServerApp.Controllers
         {
             try
             {
-                var result = await apiProxy.GetTarifById(tarifid);
-                if (result.IsSuccessStatusCode)
-                {
-                    if (result.Content.IsSuccsess)
-                        return PartialView("Partials/Tarif/_TaridByIdPartial", result.Content.Data);
-                    else
-                    {
-                        TempData["AlertMessage"] = result.Content.Errors;
-                        foreach (var error in result.Content.Errors)
-                            logger.LogError(error);
-                        return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
-                    }
-                }
-                else 
-                {
-                    var errorText = "Произошла ошибка при отправке запроса на сервер";
-                    TempData["AlertMessage"] = new[] { errorText };
-                    logger.LogError(errorText);
-                    return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
-                }
+				var errors = new List<string>();
+				var result = await apiProxy.GetTarifById(tarifid);
+
+				if (!result.IsSuccessStatusCode)
+					errors.Add("Ошибка при отправке запроса на сервер");
+
+				else if (!result.Content.IsSuccsess)
+					errors.AddRange(result.Content.Errors);
+
+				if (errors.Any())
+				{
+					TempData["AlertMessage"] = errors.ToArray();
+					foreach (var error in errors)
+						logger.LogError(error);
+					return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
+				}
+
+                return PartialView("Partials/Tarif/_TaridByIdPartial", result.Content.Data);
+                   
             }
             catch(Exception ex)
             {
-                logger.LogError($"{ex.Message}", ex);
+				TempData["AlertMessage"] = new[] { "Произошла ошибка" };
+				logger.LogError($"{ex.Message}", ex);
                 return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
             }
         }
@@ -443,9 +440,9 @@ namespace LicenseServerApp.Controllers
 		{
             return PartialView("Partials/" + viewName, model);
 		}
-			public async Task<IActionResult> SetPartial(int partialId)
-		    {
-            var organizationsViewData = new PagedResult<OrganizationView>()
+		public async Task<IActionResult> SetPartial(int partialId)
+		{
+            var organizationsViewData = new PagedResult<OrganizationView>
             {
                 Items = new List<OrganizationView>(),
                 CurrentPage = 1,
@@ -453,11 +450,11 @@ namespace LicenseServerApp.Controllers
             };
 
             object model = new();
-			var name = string.Empty;
+		    var name = string.Empty;
             switch (partialId)
-			{
-				case 0:
-					model = new List<LicenseView>(); name = "License/_LicenseListByOrgPartial"; break;
+		    {
+			    case 0:
+				    model = new List<LicenseView>(); name = "License/_LicenseListByOrgPartial"; break;
                 case 1:
                     model = new List<LicenseView>(); name = "License/_LicenseListByOrgWithProgPartial"; break;
                 case 2:
@@ -490,7 +487,7 @@ namespace LicenseServerApp.Controllers
             }
 
             return PartialView("Partials/"+name, model);
-        }
+    }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()

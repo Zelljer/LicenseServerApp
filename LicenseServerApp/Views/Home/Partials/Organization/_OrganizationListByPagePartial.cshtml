@@ -8,6 +8,7 @@
             url: '@Url.Action("GetOrganizationsByPages", "Home")',
             type: 'GET',
             data: { page: $("#currenrPage").val(), pageSize: $("#pageSize").val() },
+            xhrFields: { withCredentials: true },
             success: function (data) {
                 $('#dataContainer').html(data);
             },

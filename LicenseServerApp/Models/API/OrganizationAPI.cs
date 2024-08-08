@@ -17,7 +17,6 @@ namespace LicenseServerApp.Models.API
             [JsonProperty("kpp")]
             public string? Kpp { get; set; }
             [JsonProperty("email")]
-            [DataType(DataType.EmailAddress)]
             public string Email { get; set; }
             [JsonProperty("phone")]
             public string Phone { get; set; }
@@ -44,6 +43,16 @@ namespace LicenseServerApp.Models.API
         public bool IsSuccsess { get; set; }
         [JsonProperty("data")]
         public PagedResult<OrganizationsLiceses> Data { get; set; }
+        [JsonProperty("errors")]
+        public string[] Errors { get; set; }
+    }
+
+    public class OrganizationResult
+    {
+        [JsonProperty("isSuccsess")]
+        public bool IsSuccsess { get; set; }
+        [JsonProperty("data")]
+        public OrganizationAPI.OrganizationResponse Data { get; set; }
         [JsonProperty("errors")]
         public string[] Errors { get; set; }
     }

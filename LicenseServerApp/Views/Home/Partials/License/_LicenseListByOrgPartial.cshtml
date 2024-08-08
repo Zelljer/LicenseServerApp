@@ -1,5 +1,4 @@
-﻿
-@using LicenseServerApp.Models.View
+﻿@using LicenseServerApp.Models.View
 @model IEnumerable<LicenseView>
 
 <script type="text/javascript">
@@ -8,6 +7,7 @@
             url: '@Url.Action("GetLicensesByOrg", "Home")',
             type: 'GET',
             data: { orgId: $("#orgIdInput").val() },
+            xhrFields: { withCredentials: true },
             success: function (data) {
                 $('#dataContainer').html(data);
             },
@@ -66,9 +66,9 @@
                         <th>@Html.DisplayFor(modelItem => item.OrganizationName)</th>
                         <th>@Html.DisplayFor(modelItem => item.ProgramName)</th>
                         <th>@Html.DisplayFor(modelItem => item.TarifName)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateCreate)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateStart)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateEnd)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateCreated)</th>
+                        <th>@Html.DisplayFor(modelItem => item.StartDate)</th>
+                        <th>@Html.DisplayFor(modelItem => item.EndDate)</th>
                     </tr>
                 }
             </tbody>

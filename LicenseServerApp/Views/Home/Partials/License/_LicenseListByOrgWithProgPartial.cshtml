@@ -8,6 +8,7 @@
             url: '@Url.Action("GetLicensesByOrgWithProg", "Home")',
             type: 'GET',
             data: { orgId: $("#orgInput").val(), programId: $("#progSelect").prop('selectedIndex') },
+            xhrFields: { withCredentials: true },
             success: function (data) {
                 $('#dataContainer').html(data);
             },
@@ -73,9 +74,9 @@
                         <th>@Html.DisplayFor(modelItem => item.OrganizationName)</th>
                         <th>@Html.DisplayFor(modelItem => item.ProgramName)</th>
                         <th>@Html.DisplayFor(modelItem => item.TarifName)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateCreate)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateStart)</th>
-                        <th>@Html.DisplayFor(modelItem => item.DateEnd)</th>
+                        <th>@Html.DisplayFor(modelItem => item.DateCreated)</th>
+                        <th>@Html.DisplayFor(modelItem => item.StartDate)</th>
+                        <th>@Html.DisplayFor(modelItem => item.EndDate)</th>
                     </tr>
                 }
             </tbody>

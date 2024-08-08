@@ -8,9 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddRefitClient<IApiProxy>().ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:7260/"));
+builder.Services.AddRefitClient<IApi>().ConfigureHttpClient(c =>
+{
+    c.BaseAddress = new Uri("https://localhost:7260/");
 
-builder.Services.AddAuthentication(options =>
+    //c.DefaultRequestHeaders.Add("Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJpdmFuMTIzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJqdGkiOiI4NzI1OTZlNC1iYzViLTQzMTMtYTI1ZC05NmQ4ZDdiOGUxODIiLCJleHAiOjE3MjMxNjIwNjUsImlzcyI6Imlzc3VlciIsImF1ZCI6Imlzc3VlciJ9.r_mx3pVctiiXNgKavUajKFTFeXvH3gC-rNGmCza-si8");
+}).SetHandlerLifetime(TimeSpan.FromHours(12));
+
+/*builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -36,9 +41,12 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         }
     };
-});
+});*/
 
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
+builder.Services.ConfigureApplicationCookie(options => {
+    options.ExpireTimeSpan = TimeSpan.FromHours(12);
+});
 
 var app = builder.Build();
 
@@ -50,11 +58,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCookiePolicy();
 // Middleware
 app.UseRouting();
+    
+    /*
+                  
 app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthorization();*/
 
 app.MapControllerRoute(
 	name: "default",

@@ -1,82 +1,75 @@
 ﻿using LicenseServerApp.Models.API;
 using LicenseServerApp.Models.API.Dependencies;
 using LicenseServerApp.Models.View;
-using System.ComponentModel;
 
 namespace LicenseServerApp.Utils.Converters
 {
     public static class DataConverter
     {
-        public static IEnumerable<LicenseView> ToLicenseView(IEnumerable<LicenseAPI.LicenseResponse> data, List<TarifAPI.TarifResponse> tarifs, List<OrganizationAPI.OrganizationResponse> organizations)
+        public static IEnumerable<LicenseView> ToLicenseView(IEnumerable<LicenseAPI.LicenseResponse> data, List<TarifAPI.TarifResponse> tarifs, OrganizationAPI.OrganizationResponse organization)
         {
             if (data == null)
                 return Enumerable.Empty<LicenseView>();
 
-            var result = data.Select(license => new LicenseView
+			return data.Select(license => new LicenseView
             {
                 LicenceId = license.Id,
-                OrganizationName = organizations.Find(t => t.Id == license.OrganizationId)?.Name,
-                ProgramName = tarifs.Find(t => t.Id == license.TarifId)?.Program.ToString(),
-                TarifName = tarifs.Find(t => t.Id == license.TarifId)?.Name,
+                OrganizationName = organization?.Name ?? string.Empty,
+                ProgramName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Program.ToString() ?? string.Empty : string.Empty,
+                TarifName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Name ?? string.Empty : string.Empty,
                 DateCreated = license?.DateCreated.ToString("yyyy-MM-dd") ?? string.Empty,
                 StartDate = license?.StartDate.ToString("yyyy-MM-dd") ?? string.Empty,
                 EndDate = license?.EndDate.ToString("yyyy-MM-dd") ?? string.Empty
             });
-
-            return result;
         }
 
         public static IEnumerable<OrganizationView> ToOrganizationView(IEnumerable<OrganizationsLiceses> data, List<TarifAPI.TarifResponse> tarifs)
         {
-            if (data == null)
-                return Enumerable.Empty<OrganizationView>();
-
-            var result = data.SelectMany(orgLicense =>
+            return data.SelectMany(orgLicense =>
             {
                 if (orgLicense == null)
                     return Enumerable.Empty<OrganizationView>();
 
                 if (orgLicense.Licenses == null || !orgLicense.Licenses.Any())
-                {
-                    return new List<OrganizationView>
+                    return CreateEmptyLicence(orgLicense);
+
+                return orgLicense.Licenses.Select(license => CreateLicenceView(tarifs, orgLicense, license));
+            });
+        }
+
+        private static IEnumerable<OrganizationView> CreateEmptyLicence(OrganizationsLiceses orgLicense)
+        {
+            return new List<OrganizationView>
                     {
                         new OrganizationView
                         {
-                            OrganizationId = orgLicense.Organization?.Id ?? 0,
-                            OrganizationName = orgLicense.Organization?.Name ?? string.Empty,
-                            OrganizationInn = orgLicense.Organization?.Inn ?? string.Empty,
-                            OrganizationKpp = orgLicense.Organization?.Kpp ?? string.Empty,
-                            OrganizationEmail = orgLicense.Organization?.Email ?? string.Empty,
-                            OrganizationPhone = orgLicense.Organization?.Phone ?? string.Empty,
-                            LicenceId = 0,
-                            ProgramName = string.Empty, 
-                            TarifName = string.Empty, 
-                            DateCreated = string.Empty, 
-                            StartDate = string.Empty, 
-                            EndDate = string.Empty 
+                            OrganizationId = orgLicense.Organization.Id,
+                            OrganizationName = orgLicense.Organization.Name,
+                            OrganizationInn = orgLicense.Organization.Inn,
+                            OrganizationKpp = orgLicense.Organization.Kpp,
+                            OrganizationEmail = orgLicense.Organization.Email,
+                            OrganizationPhone = orgLicense.Organization.Phone,
                         }
                     };
-                }
+        }
 
-
-                return orgLicense.Licenses.Select(license => new OrganizationView
-                    {
-                        OrganizationId = orgLicense.Organization?.Id ?? 0,
-                        OrganizationName = orgLicense.Organization?.Name ?? string.Empty,
-                        OrganizationInn = orgLicense.Organization?.Inn ?? string.Empty,
-                        OrganizationKpp = orgLicense.Organization?.Kpp ?? string.Empty,
-                        OrganizationEmail = orgLicense.Organization?.Email ?? string.Empty,
-                        OrganizationPhone = orgLicense.Organization?.Phone ?? string.Empty,
-                        LicenceId = license?.Id ?? 0, 
-                        ProgramName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Program.ToString() ?? string.Empty : string.Empty,
-                        TarifName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Name ?? string.Empty : string.Empty,
-                        DateCreated = license?.DateCreated.ToString("yyyy-MM-dd") ?? string.Empty,
-                        StartDate = license?.StartDate.ToString("yyyy-MM-dd") ?? string.Empty,
-                        EndDate = license?.EndDate.ToString("yyyy-MM-dd") ?? string.Empty
-                    });
-                });
-
-            return result;
+        private static OrganizationView CreateLicenceView(List<TarifAPI.TarifResponse> tarifs, OrganizationsLiceses orgLicense, LicenseAPI.LicenseResponse license)
+        {
+            return new OrganizationView
+            {
+                OrganizationId = orgLicense.Organization.Id,
+                OrganizationName = orgLicense.Organization.Name,
+                OrganizationInn = orgLicense.Organization.Inn,
+                OrganizationKpp = orgLicense.Organization.Kpp,
+                OrganizationEmail = orgLicense.Organization.Email,
+                OrganizationPhone = orgLicense.Organization.Phone,
+                LicenceId = license.Id,
+                ProgramName = tarifs.First(t => t.Id == license.TarifId).Program.ToString(),
+                TarifName = tarifs.First(t => t.Id == license.TarifId).Name,
+                DateCreated = license.DateCreated.ToString("yyyy-MM-dd"),
+                StartDate = license.StartDate.ToString("yyyy-MM-dd"),
+                EndDate = license.EndDate.ToString("yyyy-MM-dd"),
+            };
         }
     }
 }

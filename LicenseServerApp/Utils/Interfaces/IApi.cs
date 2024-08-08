@@ -1,9 +1,10 @@
 ﻿using LicenseServerApp.Models.API;
+using Microsoft.AspNetCore.Mvc;
 using Refit;
 
 namespace LicenseServerApp.Utils.Interfaces
 {
-    public interface IApiProxy
+	public interface IApi
 	{
         [Get("/api/Licenses/licensesOrg")]
         Task<IApiResponse<LicensesResult>> GetLicensesByOrg(int orgId);
@@ -21,6 +22,10 @@ namespace LicenseServerApp.Utils.Interfaces
         Task<IApiResponse<StringResult>> DeleteLicense(int licenseId);
 
 		///
+
+		[Get("/api/Organizations/organizationId")]
+		Task<IApiResponse<OrganizationResult>> GetOrganizationById(int organizationId);
+
 
 		[Get("/api/Organizations/organizations")]
 		Task<IApiResponse<OrganizationsResult>> GetOrganizationsByPages(int page, int pageSize);
