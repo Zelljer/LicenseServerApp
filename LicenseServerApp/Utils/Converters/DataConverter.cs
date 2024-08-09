@@ -19,9 +19,9 @@ namespace LicenseServerApp.Utils.Converters
                     OrganizationName = organization.Name,
                     ProgramName = tarifs.First(t => t.Id == license.TarifId).Program.ToString(),
                     TarifName = tarifs.First(t => t.Id == license.TarifId).Name,
-                    DateCreated = license.DateCreated.ToString("yyyy-MM-dd"),
-                    StartDate = license.StartDate.ToString("yyyy-MM-dd"),
-                    EndDate = license.EndDate.ToString("yyyy-MM-dd")
+                    DateCreated = license.DateCreated.ToShortDateString(),
+                    StartDate = license.StartDate.ToShortDateString(),
+                    EndDate = license.EndDate.ToShortDateString()
                 });
             }
             catch 
@@ -80,9 +80,9 @@ namespace LicenseServerApp.Utils.Converters
                 LicenceId = license.Id,
                 ProgramName = tarifs.First(t => t.Id == license.TarifId).Program.ToString(),
                 TarifName = tarifs.First(t => t.Id == license.TarifId).Name,
-                DateCreated = license.DateCreated.ToString("yyyy-MM-dd"),
-                StartDate = license.StartDate.ToString("yyyy-MM-dd"),
-                EndDate = license.EndDate.ToString("yyyy-MM-dd"),
+                DateCreated = license.DateCreated.ToShortDateString(),
+                StartDate = license.StartDate.ToShortDateString(),
+                EndDate = license.EndDate.ToShortDateString(),
             };
         }
     }
