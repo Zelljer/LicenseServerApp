@@ -34,14 +34,16 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return RedirectToAction("Index");
 				}
 
                 TempData["AlertMessage"] = new[] { result.Content.Data };
-                return RedirectToAction("Index");
 
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -67,8 +69,10 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return RedirectToAction("Index");
 				}
 				
@@ -78,9 +82,10 @@ namespace LicenseServerApp.Controllers
                     Secure = true,
                     SameSite = SameSiteMode.Strict
                 });
+
 				TempData["AlertMessage"] = new [] { "Авторизация прошла успешно" };
-                return RedirectToAction("Index");
-                   
+
+                return RedirectToAction("Index");    
             }
             catch (Exception ex)
             {
@@ -106,8 +111,10 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return PartialView("Partials/User/_UserGetCurrentTokenPartial");
 				}
 
@@ -140,12 +147,15 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return RedirectToAction("Index");
 				}
 
                 TempData["AlertMessage"] = new[] { result.Content.Data };
+
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -172,12 +182,15 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return PartialView("Partials/License/_LicenseDeletePartial");
 				}
 
 				TempData["AlertMessage"] = new[] { result.Content.Data };
+
 				return PartialView("Partials/License/_LicenseDeletePartial");
 			}
             catch (Exception ex)
@@ -210,12 +223,15 @@ namespace LicenseServerApp.Controllers
                 if (errors.Any())
                 {
                     TempData["AlertMessage"] = errors.ToArray();
+
                     foreach (var error in errors)
                         logger.LogError(error);
+
                     return PartialView("Partials/License/_LicenseListByOrgPartial", currentLicense);
                 }
 
                 currentLicense = DataConverter.ToLicenseView(licenseResult.Content.Data,tarifs,organizationResult.Content.Data).ToList();
+
                 return PartialView("Partials/License/_LicenseListByOrgPartial", currentLicense);
             }
             catch (Exception ex)
@@ -226,7 +242,7 @@ namespace LicenseServerApp.Controllers
 			}
         }
 
-        public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId) // Буду исправлять
+        public async Task<IActionResult> GetLicensesByOrgWithProg(int orgId, int programId)
         {
 			var currentLicense = new List<LicenseView>();
 			try
@@ -248,12 +264,15 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentLicense);
 				}
 
 				currentLicense = DataConverter.ToLicenseView(licenseResult.Content.Data, tarifs, organizationResult.Content.Data).ToList();
+
 				return PartialView("Partials/License/_LicenseListByOrgWithProgPartial", currentLicense);
 			}
 			catch (Exception ex)
@@ -282,14 +301,16 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return RedirectToAction("Index");
 				}
 
                 TempData["AlertMessage"] = new[] { result.Content.Data };
-                return RedirectToAction("Index");
-                  
+
+                return RedirectToAction("Index");   
             }
             catch (Exception ex)
             {
@@ -317,12 +338,15 @@ namespace LicenseServerApp.Controllers
                 if (errors.Any())
                 {
                     TempData["AlertMessage"] = errors.ToArray();
+
                     foreach (var error in errors)
                         logger.LogError(error);
+
                     return PartialView("Partials/Organization/_OrganizationListByPagePartial", currentPage);
                 }
 
                 var data = result.Content.Data;
+
                 currentPage.TotalPages = data?.TotalPages ?? 1;
                 currentPage.CurrentPage = data?.TotalPages ?? 1;
                 currentPage.Items = DataConverter.ToOrganizationView(data?.Items ?? new List<OrganizationsLiceses>(), tarifs);
@@ -355,12 +379,15 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return RedirectToAction("Index");
 				}
 
                 TempData["AlertMessage"] = new[] { result.Content.Data };
+
                 return RedirectToAction("Index");   
             }
             catch(Exception ex)
@@ -376,7 +403,6 @@ namespace LicenseServerApp.Controllers
             try
             {
 				var errors = new List<string>();
-                //var auth = Request.Cookies["Authorization"];
                 var result = apiProxy.GetAllTarifs();
 
 				if (!result.Result.IsSuccessStatusCode)
@@ -388,8 +414,10 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return [];
 				}
 
@@ -419,13 +447,14 @@ namespace LicenseServerApp.Controllers
 				if (errors.Any())
 				{
 					TempData["AlertMessage"] = errors.ToArray();
+
 					foreach (var error in errors)
 						logger.LogError(error);
+
 					return PartialView("Partials/Tarif/_TaridByIdPartial", new TarifAPI.TarifResponse());
 				}
 
-                return PartialView("Partials/Tarif/_TaridByIdPartial", result.Content.Data);
-                   
+                return PartialView("Partials/Tarif/_TaridByIdPartial", result.Content.Data);      
             }
             catch(Exception ex)
             {

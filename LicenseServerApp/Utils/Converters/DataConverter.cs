@@ -9,39 +9,53 @@ namespace LicenseServerApp.Utils.Converters
         public static IEnumerable<LicenseView> ToLicenseView(IEnumerable<LicenseAPI.LicenseResponse> data, List<TarifAPI.TarifResponse> tarifs, OrganizationAPI.OrganizationResponse organization)
         {
             if (data == null)
-                return Enumerable.Empty<LicenseView>();
+                return [];
 
-			return data.Select(license => new LicenseView
+            try
             {
-                LicenceId = license.Id,
-                OrganizationName = organization?.Name ?? string.Empty,
-                ProgramName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Program.ToString() ?? string.Empty : string.Empty,
-                TarifName = license != null ? tarifs.Find(t => t.Id == license.TarifId)?.Name ?? string.Empty : string.Empty,
-                DateCreated = license?.DateCreated.ToString("yyyy-MM-dd") ?? string.Empty,
-                StartDate = license?.StartDate.ToString("yyyy-MM-dd") ?? string.Empty,
-                EndDate = license?.EndDate.ToString("yyyy-MM-dd") ?? string.Empty
-            });
+                return data.Select(license => new LicenseView
+                {
+                    LicenceId = license.Id,
+                    OrganizationName = organization.Name,
+                    ProgramName = tarifs.First(t => t.Id == license.TarifId).Program.ToString(),
+                    TarifName = tarifs.First(t => t.Id == license.TarifId).Name,
+                    DateCreated = license.DateCreated.ToString("yyyy-MM-dd"),
+                    StartDate = license.StartDate.ToString("yyyy-MM-dd"),
+                    EndDate = license.EndDate.ToString("yyyy-MM-dd")
+                });
+            }
+            catch 
+            {
+                return [];
+            }
         }
 
         public static IEnumerable<OrganizationView> ToOrganizationView(IEnumerable<OrganizationsLiceses> data, List<TarifAPI.TarifResponse> tarifs)
         {
-            return data.SelectMany(orgLicense =>
+            try
             {
-                if (orgLicense == null)
-                    return Enumerable.Empty<OrganizationView>();
+                return data.SelectMany(orgLicense =>
+                {
+                    if (orgLicense == null)
+                        return [];
 
-                if (orgLicense.Licenses == null || !orgLicense.Licenses.Any())
-                    return CreateEmptyLicence(orgLicense);
+                    if (orgLicense.Licenses == null || !orgLicense.Licenses.Any())
+                        return CreateEmptyLicence(orgLicense);
 
-                return orgLicense.Licenses.Select(license => CreateLicenceView(tarifs, orgLicense, license));
-            });
+                    return orgLicense.Licenses.Select(license => CreateLicenceView(tarifs, orgLicense, license));
+                });
+            }
+            catch
+            {
+                return [];
+            }
         }
 
         private static IEnumerable<OrganizationView> CreateEmptyLicence(OrganizationsLiceses orgLicense)
         {
             return new List<OrganizationView>
                     {
-                        new OrganizationView
+                        new() 
                         {
                             OrganizationId = orgLicense.Organization.Id,
                             OrganizationName = orgLicense.Organization.Name,

@@ -1,13 +1,22 @@
-﻿namespace LicenseServerApp.Models.View
+﻿using Newtonsoft.Json;
+
+namespace LicenseServerApp.Models.View
 {
     public class LicenseView
     {
+        [JsonProperty("licenceId")]
         public int LicenceId { get; set; }
+        [JsonProperty("organizationName")]
         public string OrganizationName { get; set; }
-        public string ProgramName { get; set; } 
-        public string TarifName { get; set; } 
-        public string DateCreated { get; set; } 
-        public string StartDate { get; set; } 
+        [JsonProperty("programName")]
+        public string ProgramName { get; set; }
+        [JsonProperty("tarifName")]
+        public string TarifName { get; set; }
+        [JsonProperty("dateCreated")]
+        public string DateCreated { get; set; }
+        [JsonProperty("startDate")]
+        public string StartDate { get; set; }
+        [JsonProperty("endDate")]
         public string EndDate { get; set; } 
     }
 }
