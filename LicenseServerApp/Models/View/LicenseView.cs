@@ -4,6 +4,8 @@ namespace LicenseServerApp.Models.View
 {
     public class LicenseView
     {
+        [JsonProperty("id")]
+        public int Id { get; set; }
         [JsonProperty("licenceId")]
         public int LicenceId { get; set; }
         [JsonProperty("organizationName")]

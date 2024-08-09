@@ -61,6 +61,7 @@
         <table class="table table-stroiped">
             <thead>
                 <tr>
+                    <th>№</th>
                     <th>Id организации</th>
                     <th>Имя</th>
                     <th>ИНН</th>
@@ -75,11 +76,14 @@
                 </tr>
             </thead>
             <tbody>
-                    @foreach (var itemOrganization in Model.Items)
+                @{
+                    int index = 1; 
+                    foreach (var itemOrganization in Model.Items)
                     {
-                        @if(itemOrganization != null)
+                        if(itemOrganization != null)
                         {
                             <tr>
+                                <th>@index</th> 
                                 <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationId)</th>
                                 <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationName)</th>
                                 <th>@Html.DisplayFor(modelItem => itemOrganization.OrganizationInn)</th>
@@ -92,7 +96,9 @@
                                 <th>@Html.DisplayFor(modelItem => itemOrganization.StartDate)</th>
                                 <th>@Html.DisplayFor(modelItem => itemOrganization.EndDate)</th>
                             </tr>
+                            index++;
                         }
+                    }
                 }
             </tbody>
         </table>

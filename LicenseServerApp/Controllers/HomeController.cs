@@ -1,6 +1,7 @@
 using LicenseServerApp.Models;
 using LicenseServerApp.Models.API;
 using LicenseServerApp.Models.API.Dependencies;
+using LicenseServerApp.Models.API.Types;
 using LicenseServerApp.Models.View;
 using LicenseServerApp.Utils.Converters;
 using LicenseServerApp.Utils.Interfaces;
@@ -18,12 +19,33 @@ namespace LicenseServerApp.Controllers
 
         #region Users
 
-        public async Task<IActionResult> UserRegistration(UserAPI.UserRegistrationRequest user)
+        public async Task<IActionResult> UserRegistration(RegistrationView user)
         {
             try
             {
+                if (user.Password == null || user.CheckPassword == null)
+				{
+					TempData["AlertMessage"] = new[] { "¬ведите корректные данные" };
+					return RedirectToAction("Index");
+				}
+				else if (user.Password != user.CheckPassword)
+                {
+					TempData["AlertMessage"] = new[] { "¬веденые пароли не совпадают" };
+					return RedirectToAction("Index");
+				}
+
+                var currentUser = new UserAPI.UserRegistrationRequest
+                {
+                    Login = user.Login,
+                    Password = user.Password,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Patronymic = user.Patronymic,
+                    Role = (int)RoleType.Client,
+                };
+
 				var errors = new List<string>();
-				var result = await apiProxy.UserRegistration(user);
+				var result = await apiProxy.UserRegistration(currentUser);
 
 				if (!result.IsSuccessStatusCode)
 					errors.Add("ќшибка при отправке запроса на сервер");
@@ -509,7 +531,7 @@ namespace LicenseServerApp.Controllers
                 case 9:
                     model = new UserAPI.UserAuthentificationRequest(); name = "User/_UserLoginPartial"; break;
                 case 10:
-                    model = new UserAPI.UserRegistrationRequest(); name = "User/_UserRegistrationPartial"; break;
+                    model = new RegistrationView(); name = "User/_UserRegistrationPartial"; break;
                 case 11:
                     model = ""; name = "User/_UserGetCurrentTokenPartial"; break;
 

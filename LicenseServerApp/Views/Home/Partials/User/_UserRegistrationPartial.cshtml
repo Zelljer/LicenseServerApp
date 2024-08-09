@@ -1,6 +1,6 @@
-﻿@using LicenseServerApp.Models.API
-@using LicenseServerApp.Models.API.Types
-@model UserAPI.UserRegistrationRequest;
+﻿@using LicenseServerApp.Models.API.Types
+@using LicenseServerApp.Models.View
+@model RegistrationView;
 
 <div class="row">
 	<div class="col">
@@ -19,7 +19,16 @@
 				<div class="row">
 					<div class="row">
 						<label>Пароль</label>
-						@Html.TextBoxFor(x => x.Password, "", new { @class = "form-control", @placeholder = "", @id = "Password" })
+						@Html.PasswordFor(x => x.Password, new { @class = "form-control", @placeholder = "Введите пароль", @id = "Password" })
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="row">
+					<div class="row">
+						<label>Повторите пароль</label>
+						@Html.PasswordFor(x => x.CheckPassword, new { @class = "form-control", @placeholder = "Введите пароль", @id = "CheckPassword" })
 					</div>
 				</div>
 			</div>
@@ -47,20 +56,6 @@
 					<div class="row">
 						<label>Отчество</label>
 						@Html.TextBoxFor(x => x.Patronymic, "", new { @class = "form-control", @placeholder = "", @id = "Patronymic" })
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="row">
-					<div class="row">
-						<label>Роль</label>
-						<select asp-for="Role" class="form-control" id="Role">
-						@foreach (var item in Enum.GetValues(typeof(RoleType)))
-						{
-							<option value=@item>@item.ToString()</option>
-						}
-						</select>
 					</div>
 				</div>
 			</div>
